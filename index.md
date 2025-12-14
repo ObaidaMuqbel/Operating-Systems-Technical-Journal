@@ -708,3 +708,8 @@ ________________________________________
 The system demonstrates strong security posture, efficient resource usage, and professional Linux server administration practices. Trade-offs between performance and security were identified, measured, and justified using quantitative evidence.
 ________________________________________
 
+________________________________________
+References
+•	ChatGPT – Helped with grammatical and English errors throughout the document for professional look. 
+________________________________________
+
