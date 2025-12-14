@@ -5,15 +5,12 @@
 **Student ID:** A00013570  
 **Module:** CMPN202 Operating Systems  
 
-> This GitHub Pages site documents my CMPN202 technical journal across all seven phases.  
-> Detailed screenshots, performance graphs, and command output are provided in the submitted technical journal document.
-
 ---
 
 ## Phase 1 – System Planning & Distribution Selection
 
 ### 1.1 System Architecture
-The system follows a dual-machine architecture. An Ubuntu Server (headless) acts as the managed server, while an Ubuntu Desktop virtual machine acts as the workstation. All administration is performed remotely over SSH, enforcing command-line proficiency and reflecting real-world server management practices.
+The system follows a dual-machine architecture. An Ubuntu Server (headless) acts as the managed server. An Ubuntu Desktop virtual machine acts as the workstation. All administration is performed remotely over SSH, enforcing command-line proficiency and reflecting real-world server management practices.
 
 **Architecture Description**
 - Workstation: Ubuntu Desktop VM  
@@ -81,17 +78,17 @@ Network monitoring and logging
 2.3 Threat Model
 Threat	Description	Mitigation
 Malware	Exploits vulnerabilities	Automatic updates, limited sudo access
-DoS Attack	Resource exhaustion	Firewall rules, system monitoring
+DoS Attack	Resource exhaustion	Firewall rules, monitoring
 SSH Brute Force	Credential guessing	SSH keys, fail2ban
 
 Phase 3 – Application Selection for Performance Testing
 3.1 Application Selection Matrix
 Workload	Application	Justification
-CPU	sysbench	Industry-standard benchmarking
-RAM	stress-ng	Controlled memory stress
-Disk	dd	Low-level disk I/O
-Network	iperf3	Bandwidth testing
-Server	Apache	Real-world workload
+CPU	sysbench	Industry-standard benchmarking tool
+RAM	stress-ng	Controlled memory stress testing
+Disk	dd	Low-level disk I/O measurement
+Network	iperf3	Bandwidth and latency testing
+Server	Apache	Real-world multi-client workload
 
 3.2 Installation Documentation
 Applications were installed remotely via SSH:
@@ -118,13 +115,13 @@ iotop – Disk I/O
 
 iftop – Network traffic
 
-vmstat, free – Memory
+vmstat, free – Memory behaviour
 
-journalctl – Logs
+journalctl – System logs
 
 Phase 4 – Initial System Configuration & Security Implementation
 4.1 SSH Hardening
-SSH was configured for key-based authentication. Password authentication and direct root login were disabled in /etc/ssh/sshd_config.
+SSH was configured for key-based authentication. Password authentication and direct root login were disabled by editing /etc/ssh/sshd_config.
 
 4.2 Firewall Configuration
 UFW was configured to allow SSH only from the workstation:
@@ -135,7 +132,7 @@ sudo ufw allow from <workstation-ip> to any port 22
 sudo ufw enable
 sudo ufw status verbose
 4.3 User Privilege Management
-A non-root administrative user was created:
+A non-root administrative user was created and added to the sudo group:
 
 bash
 Copy code
@@ -152,14 +149,14 @@ bash
 Copy code
 aa-status
 5.2 Automatic Updates
-Unattended upgrades were enabled:
+Unattended security updates were enabled:
 
 bash
 Copy code
 sudo apt install unattended-upgrades
 sudo dpkg-reconfigure unattended-upgrades
 5.3 Intrusion Detection (fail2ban)
-Fail2Ban was installed and configured to protect SSH.
+Fail2Ban was installed and configured to protect SSH from brute-force attacks.
 
 5.4 Security Baseline Script
 The security-baseline.sh script verifies SSH configuration, firewall status, Fail2Ban, AppArmor, and update services.
@@ -170,7 +167,7 @@ Fail2Ban status checks were prioritised during evaluation.
 
 Phase 6 – Performance Evaluation & Analysis
 6.1 Testing Methodology
-Baseline and load tests were conducted for each workload. Values were derived from representative test runs.
+Baseline and load tests were conducted for each workload. Values were derived from representative test runs rather than repeated statistical sampling.
 
 6.2 Performance Data & Visualisation
 Subsystem	Tool	Metric	Result
@@ -181,7 +178,7 @@ Network	iperf3	Bandwidth	~3.8–4.0 Gbit/s
 Server	siege	Transactions/sec	~3,700
 
 6.3 Trade-off Analysis
-Security controls introduced minimal overhead while significantly improving resilience and reducing attack surface.
+Security controls introduced minimal overhead while significantly improving system resilience and reducing attack surface.
 
 Phase 7 – Security Audit & System Evaluation
 7.1 Security Audit
@@ -190,7 +187,7 @@ A full audit was conducted using Lynis:
 bash
 Copy code
 sudo lynis audit system
-The hardening index of 63 reflects implemented security controls and acceptable risks within a controlled environment.
+The hardening index of 63 reflects implemented security controls and acceptable risks within a controlled, non-production environment.
 
 7.2 Network Security Assessment
 Only SSH was accessible from the workstation, consistent with firewall rules.
@@ -204,7 +201,7 @@ systemctl list-units --type=service --state=running
 SSH service status was verified.
 
 7.4 Final Evaluation
-The system demonstrates secure configuration, efficient resource usage, and professional Linux administration practices. Trade-offs between performance and security were identified and justified.
+The system demonstrates strong security posture, efficient resource usage, and professional Linux server administration practices. Trade-offs between performance and security were identified, measured, and justified.
 
 References
 ChatGPT – Assisted with grammar and clarity improvements.
