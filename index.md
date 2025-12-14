@@ -3,9 +3,6 @@ Technical Journal
 Name: Obaida Muqbel
 Student ID: A00013570
 Module: CMPN202 Operating Systems
-Distribution (Server): Ubuntu Server (Headless)
-Workstation: Ubuntu Desktop VM
-Administration Method: SSH (CLI only)
 
 
 
