@@ -5,49 +5,50 @@
 **Student ID:** A00013570  
 **Module:** CMPN202 Operating Systems  
 
+> This GitHub Pages site documents my CMPN202 technical journal across all seven phases.  
+> Detailed screenshots, performance graphs, and command output are provided in the submitted technical journal document.
+
 ---
 
 ## Phase 1 – System Planning & Distribution Selection
 
 ### 1.1 System Architecture
-The system follows a dual-machine architecture. An Ubuntu Server (headless) acts as the managed server. An Ubuntu Desktop virtual machine acts as the workstation. All administration is performed remotely over SSH, enforcing command-line proficiency and reflecting real-world server management practices.
+The system follows a dual-machine architecture. An Ubuntu Server (headless) acts as the managed server, while an Ubuntu Desktop virtual machine acts as the workstation. All administration is performed remotely over SSH.
 
 **Architecture Description**
 - Workstation: Ubuntu Desktop VM  
 - Server: Ubuntu Server (headless)  
 - Network: VirtualBox NAT  
-- Remote Access: SSH (TCP port 22) from workstation to server only  
+- Remote Access: SSH (TCP port 22)
 
 ---
 
 ### 1.2 Distribution Selection Justification
 Two Linux distributions were evaluated: Ubuntu Server and Linux Mint.
 
-Ubuntu Server was selected for the server system due to its stability, extensive long-term support (LTS), and strong community and enterprise backing. Ubuntu Server is widely used in cloud and data centre environments, making it ideal for learning professional system administration skills. Its headless operation encourages efficient resource usage and aligns with sustainability principles.
-
-Linux Mint was considered due to its user-friendly desktop environment and stability for long-term desktop use. However, Mint is not designed for server deployments and offers limited tooling and documentation for headless server administration.
+Ubuntu Server was selected due to its stability, LTS support, and suitability for headless server environments. Linux Mint was considered for usability but was unsuitable for server deployment.
 
 ---
 
 ### 1.3 Workstation Selection
-The workstation system is an Ubuntu Desktop virtual machine. This choice provides a familiar graphical environment for documentation while allowing full SSH-based administration of the server. Using a Linux workstation ensures native compatibility with SSH, monitoring tools, and scripting utilities.
+The workstation system is an Ubuntu Desktop VM, providing SSH compatibility and a graphical environment for documentation.
 
 ---
 
 ### 1.4 Network Configuration
-Both virtual machines are configured using VirtualBox NAT networking. NAT allows outbound internet access for updates while preventing unsolicited inbound connections from external networks, improving security.
+Both VMs use VirtualBox NAT networking.
 
-**IP Configuration Evidence**
+**IP Configuration**
 - Server IP: `10.0.2.15/24`
-- Network Interface: `enp0s3`
+- Interface: `enp0s3`
 
 Connectivity was verified using ICMP:
 ```bash
 ping -c 10 google.com
-Both systems reported 0% packet loss, confirming reliable connectivity.
+Both systems reported 0% packet loss.
 
 1.5 System Specification Evidence
-The following commands were executed via the command line to document system specifications:
+System information was collected using:
 
 bash
 Copy code
@@ -56,152 +57,109 @@ free -h
 df -h
 ip addr
 lsb_release -a
-Screenshots of these commands are provided in the submitted technical journal document.
-
 Phase 2 – Security Planning & Testing Methodology
 2.1 Performance Testing Plan
-Performance testing was conducted remotely from the workstation using SSH. Baseline measurements were recorded on an idle system, followed by controlled workload execution. Metrics were collected during CPU, memory, disk, and network stress to evaluate operating system behaviour under load.
+Performance testing was conducted remotely via SSH using baseline and load-based testing.
 
 2.2 Security Configuration Checklist
-SSH hardening (key-based authentication, no root login)
+SSH key-based authentication
 
-Firewall restricting SSH access to a single workstation IP
+Firewall restricted to workstation IP
 
-Mandatory Access Control (AppArmor)
+AppArmor enabled
 
-Automatic security updates
+Automatic updates
 
-User privilege management (non-root administrative user)
+Non-root administrative user
 
-Network monitoring and logging
+Network logging
 
 2.3 Threat Model
 Threat	Description	Mitigation
-Malware	Exploits vulnerabilities	Automatic updates, limited sudo access
-DoS Attack	Resource exhaustion	Firewall rules, monitoring
+Malware	Exploits vulnerabilities	Automatic updates
+DoS Attack	Resource exhaustion	Firewall rules
 SSH Brute Force	Credential guessing	SSH keys, fail2ban
 
 Phase 3 – Application Selection for Performance Testing
 3.1 Application Selection Matrix
 Workload	Application	Justification
-CPU	sysbench	Industry-standard benchmarking tool
-RAM	stress-ng	Controlled memory stress testing
-Disk	dd	Low-level disk I/O measurement
-Network	iperf3	Bandwidth and latency testing
-Server	Apache	Real-world multi-client workload
+CPU	sysbench	CPU benchmarking
+RAM	stress-ng	Memory stress
+Disk	dd	Disk I/O
+Network	iperf3	Bandwidth testing
+Server	Apache	Real workload
 
 3.2 Installation Documentation
-Applications were installed remotely via SSH:
-
 bash
 Copy code
 sudo apt update && sudo apt upgrade -y
 sudo apt install sysbench stress-ng iperf3 apache2 -y
-Apache was enabled and started:
+Apache service:
 
 bash
 Copy code
 sudo systemctl enable apache2
 sudo systemctl start apache2
-3.3 Expected Resource Profiles
-Each application stresses a specific subsystem, allowing accurate performance analysis and bottleneck identification.
+3.3 Monitoring Strategy
+top, htop – CPU/RAM
 
-3.4 Monitoring Strategy
-Monitoring tools used include:
+iotop – Disk
 
-top, htop – CPU & RAM
+iftop – Network
 
-iotop – Disk I/O
+journalctl – Logs
 
-iftop – Network traffic
-
-vmstat, free – Memory behaviour
-
-journalctl – System logs
-
-Phase 4 – Initial System Configuration & Security Implementation
+Phase 4 – Initial System Configuration & Security
 4.1 SSH Hardening
-SSH was configured for key-based authentication. Password authentication and direct root login were disabled by editing /etc/ssh/sshd_config.
+SSH was configured for key-based authentication and root login was disabled.
 
 4.2 Firewall Configuration
-UFW was configured to allow SSH only from the workstation:
-
 bash
 Copy code
 sudo ufw allow from <workstation-ip> to any port 22
 sudo ufw enable
 sudo ufw status verbose
 4.3 User Privilege Management
-A non-root administrative user was created and added to the sudo group:
-
 bash
 Copy code
 sudo adduser adminuser
 sudo usermod -aG sudo adminuser
-4.4 Remote Administration Evidence
-All configuration tasks were performed via SSH, demonstrating exclusive command-line administration.
-
-Phase 5 – Advanced Security & Monitoring Infrastructure
-5.1 Mandatory Access Control (AppArmor)
-AppArmor profiles were verified using:
-
+Phase 5 – Advanced Security
+5.1 AppArmor Verification
 bash
 Copy code
 aa-status
 5.2 Automatic Updates
-Unattended security updates were enabled:
-
 bash
 Copy code
 sudo apt install unattended-upgrades
 sudo dpkg-reconfigure unattended-upgrades
-5.3 Intrusion Detection (fail2ban)
-Fail2Ban was installed and configured to protect SSH from brute-force attacks.
+5.3 Fail2Ban
+Fail2Ban was configured to protect SSH.
 
-5.4 Security Baseline Script
-The security-baseline.sh script verifies SSH configuration, firewall status, Fail2Ban, AppArmor, and update services.
-
-5.5 Remote Monitoring Script
-The monitor-server.sh script collects system metrics remotely via SSH.
-Fail2Ban status checks were prioritised during evaluation.
-
-Phase 6 – Performance Evaluation & Analysis
+Phase 6 – Performance Evaluation
 6.1 Testing Methodology
-Baseline and load tests were conducted for each workload. Values were derived from representative test runs rather than repeated statistical sampling.
+Baseline and load testing were conducted for each subsystem.
 
-6.2 Performance Data & Visualisation
+6.2 Performance Results
 Subsystem	Tool	Metric	Result
 CPU	sysbench	Events/sec	~10,900
 Memory	sysbench	Throughput	~41 GB/s
 Disk	dd	Write speed	~446 MB/s
-Network	iperf3	Bandwidth	~3.8–4.0 Gbit/s
-Server	siege	Transactions/sec	~3,700
+Network	iperf3	Bandwidth	~4 Gbit/s
 
 6.3 Trade-off Analysis
-Security controls introduced minimal overhead while significantly improving system resilience and reducing attack surface.
+Security controls introduced minimal overhead while improving system resilience.
 
-Phase 7 – Security Audit & System Evaluation
-7.1 Security Audit
-A full audit was conducted using Lynis:
-
+Phase 7 – Security Audit
+7.1 Lynis Audit
 bash
 Copy code
 sudo lynis audit system
-The hardening index of 63 reflects implemented security controls and acceptable risks within a controlled, non-production environment.
+Hardening index: 63
 
-7.2 Network Security Assessment
-Only SSH was accessible from the workstation, consistent with firewall rules.
-
-7.3 Service Audit
-Running services were reviewed using:
-
-bash
-Copy code
-systemctl list-units --type=service --state=running
-SSH service status was verified.
-
-7.4 Final Evaluation
-The system demonstrates strong security posture, efficient resource usage, and professional Linux server administration practices. Trade-offs between performance and security were identified, measured, and justified.
+7.2 Final Evaluation
+The system demonstrates secure configuration, efficient performance, and professional Linux administration practices.
 
 References
-ChatGPT – Assisted with grammar and clarity improvements.
+ChatGPT – Grammar and clarity assistance
